@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
-class FragmentMoviesDetails : Fragment() {
+class FragmentMoviesDetails : Fragment()  {
     private var fragmentClickListener: FragmentClickListener? = null
 
     override fun onCreateView(
@@ -19,11 +19,11 @@ class FragmentMoviesDetails : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_movies_details, container, false)
 
-        view?.findViewById<ImageView>(R.id.button_back_image)?.apply {
+        view?.findViewById<ImageView>(R.id.button_back_image)?.setOnClickListener {
             fragmentClickListener?.onBackFragmentClicked()
         }
 
-        view?.findViewById<TextView>(R.id.button_back_text)?.apply {
+        view?.findViewById<TextView>(R.id.button_back_text)?.setOnClickListener {
             fragmentClickListener?.onBackFragmentClicked()
         }
 
@@ -37,8 +37,8 @@ class FragmentMoviesDetails : Fragment() {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        fragmentClickListener = null
+        override fun onDetach() {
+            super.onDetach()
+            fragmentClickListener = null
+        }
     }
-}

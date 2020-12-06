@@ -2,8 +2,6 @@ package com.example.androidacademyhw
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 
 class MainActivity : AppCompatActivity(), FragmentClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +24,9 @@ class MainActivity : AppCompatActivity(), FragmentClickListener {
     }
 
         override fun onBackFragmentClicked() {
-            supportFragmentManager.beginTransaction()
-                .remove(FragmentMoviesList())
-                .commit()
+            supportFragmentManager.popBackStack()
         }
-    }
+}
 
     interface FragmentClickListener {
         fun onMovieDetailsClicked()
