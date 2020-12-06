@@ -7,16 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.fragment.app.FragmentManager
 
-interface  FragmentMoviesClickListener {
-    fun onMovieDetailsClicked()
-}
+
 
 class FragmentMoviesList : Fragment() {
 
-    private var fragmentMoviesClickListener: FragmentMoviesClickListener? = null
+    private var fragmentMoviesClickListener: FragmentClickListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +22,8 @@ class FragmentMoviesList : Fragment() {
         val view = inflater.inflate(R.layout.fragment_movies_list, container, false)
 
         view?.findViewById<ImageView>(R.id.small_movie_picture)?.apply {
-            setOnClickListener { fragmentMoviesClickListener?.onMovieDetailsClicked() }
+            setOnClickListener { fragmentMoviesClickListener?.onMovieDetailsClicked()
+            }
         }
 
         return view
@@ -34,7 +31,7 @@ class FragmentMoviesList : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is FragmentMoviesClickListener) {
+        if (context is FragmentClickListener) {
             fragmentMoviesClickListener = context
         }
     }

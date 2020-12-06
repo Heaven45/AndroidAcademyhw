@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="#191926">
 
 <FrameLayout
     android:id="@+id/fragment_movies_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
-
 </FrameLayout>

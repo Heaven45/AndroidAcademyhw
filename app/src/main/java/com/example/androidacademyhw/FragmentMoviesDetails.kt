@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 
 class FragmentMoviesDetails : Fragment() {
-    private var fragmentClickListener: MainActivity.FragmentClickListener? = null
+    private var fragmentClickListener: FragmentClickListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +32,7 @@ class FragmentMoviesDetails : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is MainActivity.FragmentClickListener) {
+        if (context is FragmentClickListener) {
             fragmentClickListener = context
         }
     }
