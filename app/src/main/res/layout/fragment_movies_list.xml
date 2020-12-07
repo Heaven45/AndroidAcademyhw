@@ -45,16 +45,6 @@
                 app:layout_constraintStart_toEndOf="@+id/aim_image"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
-            <ImageView
-                android:id="@+id/image_frame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="27dp"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/movies_list"
-                app:srcCompat="@drawable/bg2" />
-
             <ImageView
                 android:id="@+id/aim_image"
                 android:layout_width="wrap_content"
@@ -66,6 +56,15 @@
                 app:layout_constraintEnd_toStartOf="@id/movies_list"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/path2" />
+
+            <ImageView
+                android:id="@+id/image_frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/movies_list"
+                app:srcCompat="@drawable/bg2" />
 
             <ImageView
                 android:id="@+id/small_movie_picture"
