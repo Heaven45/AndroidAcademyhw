@@ -1,4 +1,4 @@
-package com.example.androidacademyhw
+package com.example.androidacademyhw.details
 
 import android.content.Context
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.androidacademyhw.FragmentClickListener
+import com.example.androidacademyhw.R
 
 class FragmentMoviesDetails : Fragment()  {
     private var fragmentClickListener: FragmentClickListener? = null

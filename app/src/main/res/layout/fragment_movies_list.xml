@@ -3,19 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".FragmentMoviesList"
+    tools:context=".movies.FragmentMoviesList"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#191926">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            tools:context=".FragmentMoviesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#191926">
+            tools:context=".movies.FragmentMoviesList">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline"
@@ -39,9 +39,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="55dp"
-                android:textColor="@color/white"
                 android:fontFamily="@font/robotoblack"
                 android:text="@string/movies_list"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toEndOf="@+id/aim_image"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,141 +52,26 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="55dp"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:layout_constraintEnd_toStartOf="@id/movies_list"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/path2" />
 
-            <ImageView
-                android:id="@+id/image_frame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="27dp"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/movies_list"
-                app:srcCompat="@drawable/bg2" />
-
-            <ImageView
-                android:id="@+id/small_movie_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="27dp"
-                app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@+id/movies_list"
-                app:srcCompat="@drawable/smaller_movie" />
-
-            <ImageView
-                android:id="@+id/small_mask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="26dp"
-                app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@+id/movies_list"
-                app:srcCompat="@drawable/smaller_mask" />
-
-            <ImageView
-                android:id="@+id/rectangle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/rectangle"
-                app:layout_constraintTop_toTopOf="@id/image_frame"
-                app:layout_constraintStart_toStartOf="@id/image_frame"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="6dp"/>
-
-            <TextView
-                android:id="@+id/age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/_13"
-                android:textColor="@color/white"
-                android:fontFamily="@font/robotoblack"
-                android:textSize="@dimen/small_textsize"
-                app:layout_constraintTop_toTopOf="@id/rectangle"
-                app:layout_constraintStart_toStartOf="@id/rectangle"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="1dp" />
-
-            <ImageView
-                android:id="@+id/heart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
-                android:layout_marginEnd="6dp"
-                android:layout_marginRight="6dp"
-                android:src="@drawable/like"
-                app:layout_constraintEnd_toEndOf="@id/image_frame"
-                app:layout_constraintTop_toTopOf="@id/image_frame" />
-
-            <TextView
-                android:id="@+id/genre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginBottom="22dp"
-                android:fontFamily="@font/robotolight"
-                android:text="@string/genre_text"
-                android:textColor="#FF3466"
-                android:textSize="@dimen/smallest_textsize"
-                app:layout_constraintBottom_toBottomOf="@id/small_movie_picture"
-                app:layout_constraintStart_toEndOf="@id/left_guideline" />
-
-            <RatingBar
-                android:id="@+id/ratingbar"
-                style="@style/CustomRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="13dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="6dp"
-                app:layout_constraintStart_toEndOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/genre" />
-
-            <TextView
-                android:id="@+id/review_amount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="7dp"
-                android:fontFamily="@font/robotoblack"
-                android:text="125 REVIEWS"
-                android:textColor="#6D6D80"
-                android:textSize="@dimen/smallest_textsize"
-                app:layout_constraintStart_toEndOf="@+id/ratingbar"
-                app:layout_constraintTop_toBottomOf="@id/genre" />
-
-            <TextView
-                android:id="@+id/movie_name_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_movies"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="16dp"
-                android:fontFamily="@font/robotoblack"
-                android:text="@string/avengers_movie_name_list"
-                android:textColor="@color/color_white"
-                android:textSize="@dimen/main_textsize"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/ratingbar" />
-
-            <TextView
-                android:id="@+id/movie_duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
-                android:fontFamily="@font/robotoblack"
-                android:text="@string/_137_min"
-                android:textColor="#6D6D80"
-                android:textSize="@dimen/smallest_textsize"
-                app:layout_constraintStart_toEndOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/movie_name_text" />
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/movies_list"
+                app:spanCount="2"
+                tools:itemCount="4"
+                tools:listitem="@layout/movie" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#191926"
-    tools:context="FragmentMoviesDetails">
+    tools:context=".details.FragmentMoviesDetails">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="FragmentMoviesDetails">
+        tools:context=".details.FragmentMoviesDetails">
 
         <ImageView
             android:id="@+id/movie_logo_image"
