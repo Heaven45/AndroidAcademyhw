@@ -4,15 +4,26 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
+import com.example.androidacademyhw.Tags
+import com.example.androidacademyhw.data.Actor
+import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
 
 class FragmentMoviesDetails : Fragment()  {
     private var fragmentClickListener: FragmentClickListener? = null
+
+    private var _binding: FragmentMoviesDetailsBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var actorsAdapter: ActorsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +40,51 @@ class FragmentMoviesDetails : Fragment()  {
             fragmentClickListener?.onBackFragmentClicked()
         }
 
+        _binding = FragmentMoviesDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
+
+        with(binding) {
+            age.text = getString(R.string.details_item_text_pg, movie.pg)
+            movieNameText.text = movie.name
+            genre.text = movie.tags
+            ratingbar.rating = movie.rating.toFloat()
+            reviewAmount.text = getString(R.string.details_text_reviews, movie.reviewCount)
+            movieDescription.text = movie.storyLine
+            initAdapter(movie.actors)
+        }
+    }
+
+    private fun initAdapter(actors: List<Actor>) {
+        actorsAdapter = ActorsAdapter()
+        actorsAdapter.apply {
+            setHasStableIds(true)
+            submitList(actors)
+        }
+        binding.listActors.apply {
+            setHasFixedSize(true)
+            adapter = actorsAdapter
+            addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean =
+                    false
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                    if (e.action == MotionEvent.ACTION_BUTTON_PRESS) {
+                    }
+                }
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                }
+            })
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -43,4 +98,14 @@ class FragmentMoviesDetails : Fragment()  {
             super.onDetach()
             fragmentClickListener = null
         }
+
+    companion object {
+        fun newInstance(movie: Movie): FragmentMoviesDetails {
+            val fragment = FragmentMoviesDetails()
+            val args = Bundle()
+            args.putSerializable(Tags.KEY_MOVIE, movie)
+            fragment.arguments = args
+            return fragment
+        }
     }
+}

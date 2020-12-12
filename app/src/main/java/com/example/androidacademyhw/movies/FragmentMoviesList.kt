@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.core.os.bundleOf
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
+import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
@@ -32,6 +33,8 @@ class FragmentMoviesList : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_movies_list, container, false)
+        _binding = FragmentMoviesListBinding.inflate(inflater, container, false)
+        return binding.root
 
         return view
     }
@@ -58,6 +61,7 @@ class FragmentMoviesList : Fragment() {
 
                 }
             )
+
         moviesAdapter.likeClickListener = { position, isLike ->
 
         }
@@ -168,23 +172,41 @@ class FragmentMoviesList : Fragment() {
         fragmentMoviesClickListener = null
     }
 
-    fun onMovieDetailsClicked(movie: Movie) {
-        childFragmentManager.beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.fragment_movies_list,
-                FragmentMoviesDetails().apply {
-                    arguments = bundleOf("MovieDetail" to movie) // Вытащить по этому ключу
-                }
-            )
+//    fun onMovieDetailsClicked(movie: Movie) {
+//        childFragmentManager.beginTransaction()
+//            .addToBackStack(null)
+//            .replace(R.id.fragment_movies_list,
+//                FragmentMoviesDetails().apply {
+//                    arguments = bundleOf("MovieDetail" to movie) // Вытащить по этому ключу
+//                }
+//            )
+//            .commit()
+//    }
+
+
+    private fun navigateToDetails(movie: Movie) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_movies_list, FragmentMoviesDetails.newInstance(movie))
+            .addToBackStack(Tags.BACK_STACK_TAG)
             .commit()
+    }
+
+    fun onMovieDetailsClicked(movie: Movie) {
+        navigateToDetails(movie)
+    }
+
+    fun onLikeClick(position: Int, isLike: Boolean) {
+        movies[position].isLike = !isLike
+        moviesAdapter.submitList(null)
+        moviesAdapter.submitList(movies.toMutableList())
     }
 
     companion object {
         fun newInstance(): FragmentMoviesList {
-            val fragment =
-                FragmentMoviesList()
+            val args = Bundle()
+            val fragment = FragmentMoviesList()
+            fragment.arguments = args
             return fragment
         }
     }
-
 }

@@ -48,16 +48,16 @@ class MoviesAdapter(
                     )
                 }
 
-                imageMovie.setImageDrawable(ContextCompat.getDrawable(root.context, item.image))
-                textPg.text = root.context.getString(R.string.movie_item_text_pg, item.pg)
-                textTagline.text = item.tags
-                ratingBar.rating = item.rating.toFloat()
-                textReviews.text =
+                smallMoviePicture.setImageDrawable(ContextCompat.getDrawable(root.context, item.image))
+                age.text = root.context.getString(R.string.movie_item_text_pg, item.pg)
+                genre.text = item.tags
+                ratingbar.rating = item.rating.toFloat()
+                reviewAmount.text =
                     root.context.getString(R.string.movie_item_text_reviews, item.reviewCount)
-                textName.text = item.name
-                textTime.text = root.context.getString(R.string.movie_item_text_time, item.duration)
+                movieNameText.text = item.name
+                movieDuration.text = root.context.getString(R.string.movie_item_text_time, item.duration)
 
-                imageLike.setOnClickListener { likeClickListener?.invoke(position, item.isLike) }
+                heart.setOnClickListener { likeClickListener?.invoke(position, item.isLike) }
                 root.setOnClickListener { clickListener.onMovieClick(item) }
             }
         }
