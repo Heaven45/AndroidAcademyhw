@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#191926"
+    android:padding="8dp"
     tools:context=".movies.FragmentMoviesList">
 
     <androidx.constraintlayout.widget.Guideline
@@ -29,6 +30,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="55dp"
+        android:layout_marginBottom="24dp"
         android:fontFamily="@font/robotoblack"
         android:text="@string/movies_list"
         android:textColor="@color/white"
@@ -39,11 +41,10 @@
         android:id="@+id/aim_image"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="57dp"
-        app:layout_constraintEnd_toStartOf="@id/movies_list"
-        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@id/list_movies"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/path2" />
 
@@ -51,9 +52,8 @@
         android:id="@+id/list_movies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="?android:attr/actionBarSize"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
