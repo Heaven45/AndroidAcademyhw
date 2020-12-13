@@ -18,8 +18,6 @@ class MainActivity : AppCompatActivity(), FragmentClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        savedInstanceState ?: initMoviesList()
-
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .addToBackStack(null)

@@ -60,6 +60,13 @@ class FragmentMoviesDetails : Fragment()  {
             movieDescription.text = movie.storyLine
             initAdapter(movie.actors)
         }
+
+        binding.buttonBackImage.setOnClickListener { navigateBack() }
+        binding.buttonBackText.setOnClickListener { navigateBack() }
+    }
+
+    private fun navigateBack() {
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
     private fun initAdapter(actors: List<Actor>) {

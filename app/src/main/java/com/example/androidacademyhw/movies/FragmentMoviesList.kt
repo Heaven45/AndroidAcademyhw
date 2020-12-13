@@ -6,8 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.core.os.bundleOf
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
@@ -63,7 +61,7 @@ class FragmentMoviesList : Fragment() {
             )
 
         moviesAdapter.likeClickListener = { position, isLike ->
-
+            onLikeClick(position, isLike)
         }
 
         moviesAdapter.apply {
@@ -171,18 +169,6 @@ class FragmentMoviesList : Fragment() {
         super.onDetach()
         fragmentMoviesClickListener = null
     }
-
-//    fun onMovieDetailsClicked(movie: Movie) {
-//        childFragmentManager.beginTransaction()
-//            .addToBackStack(null)
-//            .replace(R.id.fragment_movies_list,
-//                FragmentMoviesDetails().apply {
-//                    arguments = bundleOf("MovieDetail" to movie) // Вытащить по этому ключу
-//                }
-//            )
-//            .commit()
-//    }
-
 
     private fun navigateToDetails(movie: Movie) {
         requireActivity().supportFragmentManager.beginTransaction()
