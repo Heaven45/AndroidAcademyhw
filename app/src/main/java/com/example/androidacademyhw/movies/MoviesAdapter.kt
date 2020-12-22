@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.data.Genre
+import com.example.androidacademyhw.data.Actor
+
 import com.example.androidacademyhw.databinding.MovieBinding
 
 class MoviesAdapter(
@@ -50,7 +53,7 @@ class MoviesAdapter(
 
                 smallMoviePicture.setImageDrawable(ContextCompat.getDrawable(root.context, item.image))
                 age.text = root.context.getString(R.string.movie_item_text_pg, item.pg)
-                genre.text = item.tags
+                genre.text = item.tags.toString()
                 ratingbar.rating = item.rating.toFloat()
                 reviewAmount.text =
                     root.context.getString(R.string.movie_item_text_reviews, item.reviewCount)

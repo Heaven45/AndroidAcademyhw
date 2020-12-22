@@ -14,6 +14,7 @@ import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
 import com.example.androidacademyhw.details.FragmentMoviesDetails
 
+
 class FragmentMoviesList : Fragment() {
 
     private var fragmentMoviesClickListener: FragmentClickListener? = null
