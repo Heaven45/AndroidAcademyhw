@@ -52,12 +52,12 @@ class FragmentMoviesDetails : Fragment()  {
         val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
 
         with(binding) {
-            age.text = getString(R.string.details_item_text_pg, movie.pg)
-            movieNameText.text = movie.name
-            genre.text = movie.tags
-            ratingbar.rating = movie.rating.toFloat()
-            reviewAmount.text = getString(R.string.details_text_reviews, movie.reviewCount)
-            movieDescription.text = movie.storyLine
+            age.text = getString(R.string.details_item_text_pg, movie.minimumAge)
+            movieNameText.text = movie.title
+            genre.text = movie.genres.toString()
+            ratingbar.rating = movie.ratings.toFloat()
+            reviewAmount.text = getString(R.string.details_text_reviews, movie.numberOfRatings)
+            movieDescription.text = movie.overview
             initAdapter(movie.actors)
         }
 

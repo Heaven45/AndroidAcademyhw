@@ -6,7 +6,7 @@ import com.example.androidacademyhw.data.Movie
 class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
 
     override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean =
-        oldItem.name == newItem.name
+        oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean =
         oldItem == newItem

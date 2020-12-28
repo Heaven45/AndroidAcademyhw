@@ -6,7 +6,7 @@ import com.example.androidacademyhw.data.Actor
 class ActorDiffCallback : DiffUtil.ItemCallback<Actor>() {
 
     override fun areItemsTheSame(oldItem: Actor, newItem: Actor): Boolean =
-        oldItem.name == newItem.name
+        oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: Actor, newItem: Actor): Boolean =
         oldItem == newItem
