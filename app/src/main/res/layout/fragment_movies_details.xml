@@ -149,6 +149,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/robotolight"
+            android:textSize="@dimen/main_textsize"
             android:text="@string/movie_description"
             android:textColor="@color/color_white"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"

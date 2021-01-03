@@ -10,11 +10,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
 
 class FragmentMoviesDetails : Fragment()  {
@@ -42,8 +44,6 @@ class FragmentMoviesDetails : Fragment()  {
 
         _binding = FragmentMoviesDetailsBinding.inflate(inflater, container, false)
         return binding.root
-
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,9 +52,14 @@ class FragmentMoviesDetails : Fragment()  {
         val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
 
         with(binding) {
+
+            Glide.with(root.context)
+                .load(movie.poster)
+                .into(movieLogoImage)
+
             age.text = getString(R.string.details_item_text_pg, movie.minimumAge)
             movieNameText.text = movie.title
-            genre.text = movie.genres.toString()
+            genre.text = movie.genres.map{it.name}.joinToString()
             ratingbar.rating = movie.ratings.toFloat()
             reviewAmount.text = getString(R.string.details_text_reviews, movie.numberOfRatings)
             movieDescription.text = movie.overview

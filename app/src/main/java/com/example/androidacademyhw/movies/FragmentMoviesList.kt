@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.security.interfaces.DSAKey
 
 
 class FragmentMoviesList : Fragment() {
@@ -30,7 +29,6 @@ class FragmentMoviesList : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var moviesAdapter: MoviesAdapter
-    private val actors = mutableListOf<Actor>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,10 +82,6 @@ class FragmentMoviesList : Fragment() {
             loadMovies(context)
         }
     }
-
-
-
-
 
         override fun onAttach(context: Context) {
         super.onAttach(context)
