@@ -57,7 +57,7 @@ private fun readAssetFileToString(context: Context, fileName: String): String {
     return stream.bufferedReader().readText()
 }
 
-private suspend fun loadActors(context: Context): List<Actor> = withContext(Dispatchers.IO) {
+suspend fun loadActors(context: Context): List<Actor> = withContext(Dispatchers.IO) {
     val data = readAssetFileToString(context, "people.json")
     parseActors(data)
 }

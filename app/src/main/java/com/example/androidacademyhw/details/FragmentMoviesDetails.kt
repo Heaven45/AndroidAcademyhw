@@ -16,8 +16,13 @@ import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.data.loadActors
 import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FragmentMoviesDetails : Fragment()  {
     private var fragmentClickListener: FragmentClickListener? = null
@@ -68,6 +73,17 @@ class FragmentMoviesDetails : Fragment()  {
 
         binding.buttonBackImage.setOnClickListener { navigateBack() }
         binding.buttonBackText.setOnClickListener { navigateBack() }
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val actors = getActors(requireContext())
+            initAdapter(actors)
+        }
+    }
+
+    suspend fun getActors(context: Context): List<Actor> {
+        return withContext(Dispatchers.IO) {
+            loadActors(context)
+        }
     }
 
     private fun navigateBack() {

@@ -16,14 +16,12 @@
 
         <ImageView
             android:id="@+id/movie_logo_image"
-            android:layout_width="410dp"
-            android:layout_height="302dp"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
             android:contentDescription="@string/movie_logo"
             android:scaleType="centerCrop"
             android:src="@drawable/orig"
-            app:layout_constraintDimensionRatio="w,16:9"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
