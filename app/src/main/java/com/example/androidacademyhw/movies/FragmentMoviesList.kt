@@ -54,8 +54,7 @@ class FragmentMoviesList : Fragment() {
     }
 
     private fun initAdapter(movies: List<Movie>) {
-        moviesAdapter =
-            MoviesAdapter(
+        moviesAdapter = MoviesAdapter(
                 object : MoviesAdapter.OnMovieClickListener {
                     override fun onMovieClick(movie: Movie) {
                         onMovieDetailsClicked(movie)
