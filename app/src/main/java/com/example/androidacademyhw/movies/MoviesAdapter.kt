@@ -16,7 +16,7 @@ class MoviesAdapter(
     private val clickListener: OnMovieClickListener
 
 ) :
-    androidx.recyclerview.widget.ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
+    ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
