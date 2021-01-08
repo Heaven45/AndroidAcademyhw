@@ -15,10 +15,7 @@ import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
 import com.example.androidacademyhw.details.FragmentMoviesDetails
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 
 class FragmentMoviesList : Fragment() {
@@ -27,6 +24,8 @@ class FragmentMoviesList : Fragment() {
 
     private var _binding: FragmentMoviesListBinding? = null
     private val binding get() = _binding!!
+
+    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private lateinit var moviesAdapter: MoviesAdapter
 
@@ -42,7 +41,7 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        GlobalScope.launch(Dispatchers.Main) {
+        coroutineScope.launch(Dispatchers.Main) {
             val movies = getMovies(requireContext())
             initAdapter(movies)
         }
@@ -62,10 +61,6 @@ class FragmentMoviesList : Fragment() {
                     }
                 }
             )
-
-//        moviesAdapter.likeClickListener = { position, isLike ->
-//            onLikeClick(position, isLike)
-//        }
 
         moviesAdapter.apply {
             setHasStableIds(true)
@@ -105,15 +100,6 @@ class FragmentMoviesList : Fragment() {
     fun onMovieDetailsClicked(movie: Movie) {
         navigateToDetails(movie)
     }
-
-
-//    // TODO Обработка клика Handle Click RecyclerView Kotlin
-//
-//    fun onLikeClick(position: Int, isLike: Boolean) {
-//        movies[position].isLike = !isLike
-//        moviesAdapter.submitList(null)
-//        moviesAdapter.submitList(movies.toMutableList())
-//    }
 
     companion object {
         fun newInstance(): FragmentMoviesList {

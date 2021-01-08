@@ -19,16 +19,15 @@ import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.loadActors
 import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
-class FragmentMoviesDetails : Fragment()  {
+class FragmentMoviesDetails : Fragment() {
     private var fragmentClickListener: FragmentClickListener? = null
 
     private var _binding: FragmentMoviesDetailsBinding? = null
     private val binding get() = _binding!!
+
+    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private lateinit var actorsAdapter: ActorsAdapter
 
@@ -60,11 +59,13 @@ class FragmentMoviesDetails : Fragment()  {
 
             Glide.with(root.context)
                 .load(movie.poster)
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_unlike)
                 .into(movieLogoImage)
 
             age.text = getString(R.string.details_item_text_pg, movie.minimumAge)
             movieNameText.text = movie.title
-            genre.text = movie.genres.map{it.name}.joinToString()
+            genre.text = movie.genres.map { it.name }.joinToString()
             ratingbar.rating = movie.ratings.toFloat()
             reviewAmount.text = getString(R.string.details_text_reviews, movie.numberOfRatings)
             movieDescription.text = movie.overview
@@ -74,7 +75,7 @@ class FragmentMoviesDetails : Fragment()  {
         binding.buttonBackImage.setOnClickListener { navigateBack() }
         binding.buttonBackText.setOnClickListener { navigateBack() }
 
-        GlobalScope.launch(Dispatchers.Main) {
+        coroutineScope.launch(Dispatchers.Main) {
             val actors = getActors(requireContext())
             initAdapter(actors)
         }
@@ -122,10 +123,10 @@ class FragmentMoviesDetails : Fragment()  {
         }
     }
 
-        override fun onDetach() {
-            super.onDetach()
-            fragmentClickListener = null
-        }
+    override fun onDetach() {
+        super.onDetach()
+        fragmentClickListener = null
+    }
 
     companion object {
         fun newInstance(movie: Movie): FragmentMoviesDetails {

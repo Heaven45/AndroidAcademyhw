@@ -53,6 +53,8 @@ class MoviesAdapter(
 
                 Glide.with(root.context)
                     .load(item.poster)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_unlike)
                     .into(smallMoviePicture)
 
                 age.text = root.context.getString(R.string.movie_item_text_pg, item.minimumAge)
