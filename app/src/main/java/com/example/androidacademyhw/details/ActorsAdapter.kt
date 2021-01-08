@@ -26,9 +26,8 @@ class ActorsAdapter : ListAdapter<Actor, ActorsAdapter.ViewHolder>(ActorDiffCall
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Actor) {
             with(binding) {
-
                 Glide.with(root.context)
-                    .load(item.picture)
+                    .load(item.pictureUrl)
                     .placeholder(R.drawable.ic_launcher_foreground)
                     .into(imageActor)
 

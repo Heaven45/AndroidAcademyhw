@@ -16,7 +16,7 @@ class MoviesAdapter(
     private val clickListener: OnMovieClickListener
 
 ) :
-    androidx.recyclerview.widget.ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
+    ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -53,6 +53,8 @@ class MoviesAdapter(
 
                 Glide.with(root.context)
                     .load(item.poster)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_unlike)
                     .into(smallMoviePicture)
 
                 age.text = root.context.getString(R.string.movie_item_text_pg, item.minimumAge)

@@ -64,7 +64,7 @@ suspend fun loadActors(context: Context): List<Actor> = withContext(Dispatchers.
 
 internal fun parseActors(data: String): List<Actor> {
     val jsonActors = jsonFormat.decodeFromString<List<JsonActor>>(data)
-    return jsonActors.map { Actor(id = it.id, name = it.name, picture = it.profilePicture) }
+    return jsonActors.map { Actor(id = it.id, name = it.name, pictureUrl = it.profilePicture) }
 }
 
 @Suppress("unused")
