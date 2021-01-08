@@ -3,31 +3,27 @@ package com.example.androidacademyhw.movies
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
-import com.example.androidacademyhw.data.Actor
-import com.example.androidacademyhw.data.Genre
 import com.example.androidacademyhw.data.Movie
-import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
 import com.example.androidacademyhw.details.FragmentMoviesDetails
-import kotlinx.coroutines.*
+import com.example.androidacademyhw.movies.MoviesAdapter.OnMovieClickListener
 
-
-class FragmentMoviesList : Fragment() {
+class FragmentMoviesList : Fragment(), OnMovieClickListener {
 
     private var fragmentMoviesClickListener: FragmentClickListener? = null
 
     private var _binding: FragmentMoviesListBinding? = null
     private val binding get() = _binding!!
 
-    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
     private lateinit var moviesAdapter: MoviesAdapter
+    private val viewModel: MoviesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,10 +37,8 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        coroutineScope.launch(Dispatchers.Main) {
-            val movies = getMovies(requireContext())
-            initAdapter(movies)
-        }
+        viewModel.movies.observe(viewLifecycleOwner, { movies -> moviesAdapter.submitList(movies) })
+        initAdapter()
     }
 
     override fun onDestroy() {
@@ -52,32 +46,14 @@ class FragmentMoviesList : Fragment() {
         _binding = null
     }
 
-    private fun initAdapter(movies: List<Movie>) {
-        moviesAdapter = MoviesAdapter(
-                object : MoviesAdapter.OnMovieClickListener {
-                    override fun onMovieClick(movie: Movie) {
-                        onMovieDetailsClicked(movie)
-                    }
-                }
-            )
-
-        moviesAdapter.apply {
-            setHasStableIds(true)
-            submitList(movies)
-        }
+    private fun initAdapter() {
+        moviesAdapter = MoviesAdapter(this)
         binding.listMovies.apply {
-            setHasFixedSize(true)
             adapter = moviesAdapter
         }
     }
 
-    suspend fun getMovies(context: Context): List<Movie> {
-        return withContext(Dispatchers.IO) {
-            loadMovies(context)
-        }
-    }
-
-        override fun onAttach(context: Context) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is FragmentClickListener) {
             fragmentMoviesClickListener = context
@@ -96,11 +72,13 @@ class FragmentMoviesList : Fragment() {
             .commit()
     }
 
-    fun onMovieDetailsClicked(movie: Movie) {
+    override fun onMovieClick(movie: Movie) {
         navigateToDetails(movie)
     }
 
     companion object {
+        const val TAG = "Movies_List_Log"
+
         fun newInstance(): FragmentMoviesList {
             val args = Bundle()
             val fragment = FragmentMoviesList()

@@ -4,12 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
@@ -17,17 +15,15 @@ import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.loadActors
-import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
 import kotlinx.coroutines.*
+import java.io.Serializable
 
 class FragmentMoviesDetails : Fragment() {
     private var fragmentClickListener: FragmentClickListener? = null
 
     private var _binding: FragmentMoviesDetailsBinding? = null
     private val binding get() = _binding!!
-
-    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private lateinit var actorsAdapter: ActorsAdapter
 
@@ -53,8 +49,20 @@ class FragmentMoviesDetails : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
+        initAdapter()
 
+        val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
+        updateUI(movie)
+
+        binding.buttonBackImage.setOnClickListener { navigateBack() }
+        binding.buttonBackText.setOnClickListener { navigateBack() }
+    }
+
+    private fun navigateBack() {
+        requireActivity().supportFragmentManager.popBackStack()
+    }
+
+    private fun updateUI(movie: Movie) {
         with(binding) {
 
             Glide.with(root.context)
@@ -63,56 +71,35 @@ class FragmentMoviesDetails : Fragment() {
                 .error(R.drawable.ic_unlike)
                 .into(movieLogoImage)
 
-            age.text = getString(R.string.details_item_text_pg, movie.minimumAge)
+            age.text = getString(
+                com.example.androidacademyhw.R.string.details_item_text_pg,
+                movie.minimumAge
+            )
             movieNameText.text = movie.title
             genre.text = movie.genres.map { it.name }.joinToString()
             ratingbar.rating = movie.ratings.toFloat()
-            reviewAmount.text = getString(R.string.details_text_reviews, movie.numberOfRatings)
+            reviewAmount.text = getString(
+                com.example.androidacademyhw.R.string.details_text_reviews,
+                movie.numberOfRatings
+            )
             movieDescription.text = movie.overview
-            initAdapter(movie.actors)
+
+            if (movie.actors.isNotEmpty()) actorsAdapter.submitList(movie.actors)
         }
+    }
 
-        binding.buttonBackImage.setOnClickListener { navigateBack() }
-        binding.buttonBackText.setOnClickListener { navigateBack() }
-
-        coroutineScope.launch(Dispatchers.Main) {
-            val actors = getActors(requireContext())
-            initAdapter(actors)
+    private fun initAdapter() {
+        actorsAdapter = ActorsAdapter()
+        actorsAdapter.setHasStableIds(true)
+        binding.listActors.apply {
+            setHasFixedSize(true)
+            adapter = actorsAdapter
         }
     }
 
     suspend fun getActors(context: Context): List<Actor> {
         return withContext(Dispatchers.IO) {
             loadActors(context)
-        }
-    }
-
-    private fun navigateBack() {
-        requireActivity().supportFragmentManager.popBackStack()
-    }
-
-    private fun initAdapter(actors: List<Actor>) {
-        actorsAdapter = ActorsAdapter()
-        actorsAdapter.apply {
-            setHasStableIds(true)
-            submitList(actors)
-        }
-        binding.listActors.apply {
-            setHasFixedSize(true)
-            adapter = actorsAdapter
-            addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-
-                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean =
-                    false
-
-                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-                    if (e.action == MotionEvent.ACTION_BUTTON_PRESS) {
-                    }
-                }
-
-                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-                }
-            })
         }
     }
 
@@ -132,7 +119,7 @@ class FragmentMoviesDetails : Fragment() {
         fun newInstance(movie: Movie): FragmentMoviesDetails {
             val fragment = FragmentMoviesDetails()
             val args = Bundle()
-            args.putSerializable(Tags.KEY_MOVIE, movie)
+            args.putSerializable(Tags.KEY_MOVIE, movie as Serializable)
             fragment.arguments = args
             return fragment
         }

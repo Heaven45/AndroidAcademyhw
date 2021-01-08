@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.annotation.GlideModule
@@ -15,8 +16,7 @@ import com.example.androidacademyhw.databinding.MovieBinding
 class MoviesAdapter(
     private val clickListener: OnMovieClickListener
 
-) :
-    ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
+) : ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -58,7 +58,7 @@ class MoviesAdapter(
                     .into(smallMoviePicture)
 
                 age.text = root.context.getString(R.string.movie_item_text_pg, item.minimumAge)
-                genre.text = item.genres.map{it.name}.joinToString()
+                genre.text = item.genres.map { it.name }.joinToString()
                 ratingbar.rating = item.ratings.toFloat()
                 reviewAmount.text =
                     root.context.getString(R.string.movie_item_text_reviews, item.numberOfRatings)
