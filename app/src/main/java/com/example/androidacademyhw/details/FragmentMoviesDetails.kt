@@ -10,18 +10,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.data.loadActors
+import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 
-class FragmentMoviesDetails : Fragment()  {
+class FragmentMoviesDetails : Fragment() {
     private var fragmentClickListener: FragmentClickListener? = null
 
     private var _binding: FragmentMoviesDetailsBinding? = null
     private val binding get() = _binding!!
+
+    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private lateinit var actorsAdapter: ActorsAdapter
 
@@ -42,8 +49,6 @@ class FragmentMoviesDetails : Fragment()  {
 
         _binding = FragmentMoviesDetailsBinding.inflate(inflater, container, false)
         return binding.root
-
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,17 +57,35 @@ class FragmentMoviesDetails : Fragment()  {
         val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
 
         with(binding) {
-            age.text = getString(R.string.details_item_text_pg, movie.pg)
-            movieNameText.text = movie.name
-            genre.text = movie.tags
-            ratingbar.rating = movie.rating.toFloat()
-            reviewAmount.text = getString(R.string.details_text_reviews, movie.reviewCount)
-            movieDescription.text = movie.storyLine
+
+            Glide.with(root.context)
+                .load(movie.poster)
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_unlike)
+                .into(movieLogoImage)
+
+            age.text = getString(R.string.details_item_text_pg, movie.minimumAge)
+            movieNameText.text = movie.title
+            genre.text = movie.genres.map { it.name }.joinToString()
+            ratingbar.rating = movie.ratings.toFloat()
+            reviewAmount.text = getString(R.string.details_text_reviews, movie.numberOfRatings)
+            movieDescription.text = movie.overview
             initAdapter(movie.actors)
         }
 
         binding.buttonBackImage.setOnClickListener { navigateBack() }
         binding.buttonBackText.setOnClickListener { navigateBack() }
+
+        coroutineScope.launch() {
+            val actors = getActors(requireContext())
+            initAdapter(actors)
+        }
+    }
+
+    suspend fun getActors(context: Context): List<Actor> {
+        return withContext(Dispatchers.IO) {
+            loadActors(context)
+        }
     }
 
     private fun navigateBack() {
@@ -101,10 +124,15 @@ class FragmentMoviesDetails : Fragment()  {
         }
     }
 
-        override fun onDetach() {
-            super.onDetach()
-            fragmentClickListener = null
-        }
+    override fun onDetach() {
+        super.onDetach()
+        fragmentClickListener = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
 
     companion object {
         fun newInstance(movie: Movie): FragmentMoviesDetails {

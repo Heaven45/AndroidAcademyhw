@@ -9,60 +9,58 @@ import android.view.ViewGroup
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
-import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
-import com.example.androidacademyhw.details.FragmentMoviesDetails
+import com.example.androidacademyhw.movies.MoviesAdapter.OnMovieClickListener
 
-class FragmentMoviesList : Fragment() {
+import com.example.androidacademyhw.details.FragmentMoviesDetails
+import kotlinx.coroutines.*
+
+
+class FragmentMoviesList : Fragment(), OnMovieClickListener {
 
     private var fragmentMoviesClickListener: FragmentClickListener? = null
 
     private var _binding: FragmentMoviesListBinding? = null
     private val binding get() = _binding!!
 
+    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     private lateinit var moviesAdapter: MoviesAdapter
-    private val actors = mutableListOf<Actor>()
-    private val movies = mutableListOf<Movie>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_movies_list, container, false)
         _binding = FragmentMoviesListBinding.inflate(inflater, container, false)
         return binding.root
-
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initData()
-        initAdapter()
+        coroutineScope.launch() {
+            val movies = getMovies(requireContext())
+            initAdapter(movies)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        coroutineScope.cancel()
     }
 
-    private fun initAdapter() {
-        moviesAdapter =
-            MoviesAdapter(
+    private fun initAdapter(movies: List<Movie>) {
+        moviesAdapter = MoviesAdapter(
                 object : MoviesAdapter.OnMovieClickListener {
                     override fun onMovieClick(movie: Movie) {
                         onMovieDetailsClicked(movie)
                     }
-
                 }
             )
-
-        moviesAdapter.likeClickListener = { position, isLike ->
-            onLikeClick(position, isLike)
-        }
 
         moviesAdapter.apply {
             setHasStableIds(true)
@@ -74,94 +72,9 @@ class FragmentMoviesList : Fragment() {
         }
     }
 
-    private fun initData() {
-        actors.add(
-            Actor(
-                "Robert Downey Jr.",
-                R.drawable.actor1
-            )
-        )
-        actors.add(
-            Actor(
-                "Chris Evans",
-                R.drawable.actor2
-            )
-        )
-        actors.add(
-            Actor(
-                "Mark Ruffalo",
-                R.drawable.actor3
-            )
-        )
-        actors.add(
-            Actor(
-                "Chris Hemsworth",
-                R.drawable.actor4
-            )
-        )
-
-        movies.add(
-            Movie(
-                "Avengers: End Game",
-                13,
-                "Action, Adventure, Drama",
-                4,
-                125,
-                137,
-                R.drawable.smaller_movie,
-                "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-                false,
-                actors
-            )
-        )
-        movies.add(
-            Movie(
-                "Tenet",
-                16,
-                "Action, Sci-Fi, Thriller",
-                5,
-                98,
-                97,
-                R.drawable.tenet,
-                "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-                true,
-                actors
-            )
-        )
-        movies.add(
-            Movie(
-                "Black Widow",
-                13,
-                "Action, Adventure, Sci-Fi",
-                4,
-                38,
-                102,
-                R.drawable.black_widow,
-                "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-                false,
-                actors
-            )
-        )
-        movies.add(
-            Movie(
-                "Wonder Woman 1984",
-                13,
-                "Action, Adventure, Fantasy",
-                5,
-                74,
-                120,
-                R.drawable.wonderwomen,
-                "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-                false,
-                actors
-            )
-        )
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is FragmentClickListener) {
-            fragmentMoviesClickListener = context
+    suspend fun getMovies(context: Context): List<Movie> {
+        return withContext(Dispatchers.IO) {
+            loadMovies(context)
         }
     }
 
@@ -181,12 +94,6 @@ class FragmentMoviesList : Fragment() {
         navigateToDetails(movie)
     }
 
-    fun onLikeClick(position: Int, isLike: Boolean) {
-        movies[position].isLike = !isLike
-        moviesAdapter.submitList(null)
-        moviesAdapter.submitList(movies.toMutableList())
-    }
-
     companion object {
         fun newInstance(): FragmentMoviesList {
             val args = Bundle()
@@ -194,5 +101,9 @@ class FragmentMoviesList : Fragment() {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun onMovieClick(movie: Movie) {
+        navigateToDetails(movie)
     }
 }

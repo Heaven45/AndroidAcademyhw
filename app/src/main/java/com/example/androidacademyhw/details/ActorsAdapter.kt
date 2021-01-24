@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.androidacademyhw.R
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.databinding.ActorBinding
 
@@ -24,8 +26,12 @@ class ActorsAdapter : ListAdapter<Actor, ActorsAdapter.ViewHolder>(ActorDiffCall
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Actor) {
             with(binding) {
+                Glide.with(root.context)
+                    .load(item.pictureUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .into(imageActor)
+
                 textName.text = item.name
-                imageActor.setImageDrawable(ContextCompat.getDrawable(root.context, item.image))
             }
         }
     }
