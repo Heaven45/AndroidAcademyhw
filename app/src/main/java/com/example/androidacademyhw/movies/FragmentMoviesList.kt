@@ -12,11 +12,13 @@ import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
+import com.example.androidacademyhw.movies.MoviesAdapter.OnMovieClickListener
+
 import com.example.androidacademyhw.details.FragmentMoviesDetails
 import kotlinx.coroutines.*
 
 
-class FragmentMoviesList : Fragment() {
+class FragmentMoviesList : Fragment(), OnMovieClickListener {
 
     private var fragmentMoviesClickListener: FragmentClickListener? = null
 
@@ -76,13 +78,6 @@ class FragmentMoviesList : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is FragmentClickListener) {
-            fragmentMoviesClickListener = context
-        }
-    }
-
     override fun onDetach() {
         super.onDetach()
         fragmentMoviesClickListener = null
@@ -106,5 +101,9 @@ class FragmentMoviesList : Fragment() {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun onMovieClick(movie: Movie) {
+        navigateToDetails(movie)
     }
 }
