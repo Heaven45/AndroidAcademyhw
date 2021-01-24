@@ -2,79 +2,90 @@ package com.example.androidacademyhw.movies
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.annotation.GlideModule
-import com.bumptech.glide.module.AppGlideModule
+import coil.load
 import com.example.androidacademyhw.R
+import com.example.androidacademyhw.buildImageUrl
 import com.example.androidacademyhw.data.Movie
+import com.example.androidacademyhw.data.api.ApiFactory
+import com.example.androidacademyhw.data.models.Genre
+import com.example.androidacademyhw.data.models.MovieResult
+import com.example.androidacademyhw.databinding.ItemMovieBinding
 import com.example.androidacademyhw.databinding.MovieBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-class MoviesAdapter(
-    private val clickListener: OnMovieClickListener
+class MoviesAdapter(private val clickListener: OnMovieClickListener)
+    : ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
 
-) : ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
+    private val mainCoroutineContext = CoroutineScope(Dispatchers.Main)
+    private val coroutineContext = CoroutineScope(Dispatchers.IO)
+
+    private val api = ApiFactory.get()
+    var genres: List<Genre>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = MovieBinding.inflate(inflater, parent, false)
-        return ViewHolder(
-            binding
-        )
+        return ViewHolder(binding)
     }
-
-    var likeClickListener: ((position: Int, isLike: Boolean) -> Unit)? = null
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), position, clickListener, likeClickListener)
+        getItem(position)?.let { holder.bind(it, clickListener) }
     }
 
-    class ViewHolder(private val binding: MovieBinding) :
+    inner class ViewHolder(private val binding: MovieBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(
-            item: Movie,
-            position: Int,
-            clickListener: OnMovieClickListener,
-            likeClickListener: ((position: Int, isLike: Boolean) -> Unit)?
-        ) {
+
+        fun bind(item: MovieResult, clickListener: OnMovieClickListener) {
             with(binding) {
-                if (item.isLike) {
-                    heart.setImageDrawable(
-                        ContextCompat.getDrawable(root.context, R.drawable.ic_like)
-                    )
-                } else {
-                    heart.setImageDrawable(
-                        ContextCompat.getDrawable(root.context, R.drawable.ic_unlike)
-                    )
+                smallMoviePicture.load(item.poster_path?.let { buildImageUrl(it) }) {
+                    crossfade(500)
+                    placeholder(R.drawable.ic_launcher_foreground)
+                    fallback(R.drawable.unlike)
                 }
 
-                Glide.with(root.context)
-                    .load(item.poster)
-                    .placeholder(R.drawable.ic_launcher_foreground)
-                    .error(R.drawable.ic_unlike)
-                    .into(smallMoviePicture)
-
-                age.text = root.context.getString(R.string.movie_item_text_pg, item.minimumAge)
-                genre.text = item.genres.map { it.name }.joinToString()
-                ratingbar.rating = item.ratings.toFloat()
-                reviewAmount.text =
-                    root.context.getString(R.string.movie_item_text_reviews, item.numberOfRatings)
-                movieNameText.text = item.title
-                movieDuration.text = root.context.getString(
-                    R.string.movie_item_text_time,
-                    item.runtime
+                genre.text = formatGenres(item.genre_ids)
+                ratingbar.rating = item.vote_average.toFloat() / 2
+                reviewAmount.text = root.context.getString(
+                    R.string.movie_item_text_reviews, item.vote_count
                 )
+                movieNameText.text = item.title
 
-                heart.setOnClickListener { likeClickListener?.invoke(position, item.isLike) }
-                root.setOnClickListener { clickListener.onMovieClick(item) }
+                root.setOnClickListener { clickListener.onMovieClick(item.id) }
+
+                val job = coroutineContext.async {
+                    api.movie(item.id)
+                }
+
+                mainCoroutineContext.launch {
+                    val response = job.await()
+                    val releases = response.release_dates.results
+                    movieDuration.text = root.context.getString(
+                        R.string.movie_item_text_time,
+                        response.runtime
+                    )
+                    age.text =
+                        releases.find { it.iso_3166_1 == "RU" }?.release_dates?.get(0)?.certification
+                            ?: releases.find { it.iso_3166_1 == "US" }?.release_dates?.get(0)?.certification
+                }
             }
+        }
+
+        private fun formatGenres(ids: List<Int>): String {
+            val sb = StringBuffer()
+            for (i in ids.indices) {
+                sb.append(genres?.get(i)?.name)
+                if (i != ids.size - 1) sb.append(", ")
+            }
+            return sb.toString()
         }
     }
 
     interface OnMovieClickListener {
-        fun onMovieClick(movie: Movie)
+        fun onMovieClick(movieId: Int)
     }
 }

@@ -1,4 +1,4 @@
-package com.emikhalets.androidacademy.data.models
+package com.example.androidacademyhw.data.models
 
 import kotlinx.serialization.Serializable
 

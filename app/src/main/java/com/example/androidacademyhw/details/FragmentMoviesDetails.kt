@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
@@ -24,6 +25,8 @@ class FragmentMoviesDetails : Fragment() {
 
     private var _binding: FragmentMoviesDetailsBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: MoviesDetailsViewModel by viewModels()
 
     private lateinit var actorsAdapter: ActorsAdapter
 
@@ -113,6 +116,11 @@ class FragmentMoviesDetails : Fragment() {
     override fun onDetach() {
         super.onDetach()
         fragmentClickListener = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {

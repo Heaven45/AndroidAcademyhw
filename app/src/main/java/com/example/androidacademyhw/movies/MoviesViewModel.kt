@@ -1,42 +1,34 @@
-package com.example.androidacademyhw.movies
+package com.emikhalets.androidacademy.movies
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.androidacademyhw.data.Movie
-import com.example.androidacademyhw.data.loadMovies
-import kotlinx.coroutines.*
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.example.androidacademyhw.data.repository.MovieListRepository
+import com.example.androidacademyhw.data.repository.MoviesPagingSource
+import com.example.androidacademyhw.data.api.ApiFactory
+import com.example.androidacademyhw.data.models.Genre
+import kotlinx.coroutines.launch
 
 class MoviesViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val exceptionHandler = CoroutineExceptionHandler { canceledContext, exception ->
-        val isActive = coroutineScope.isActive
-        Log.d(
-            FragmentMoviesList.TAG,
-            "ExceptionHandler [Scope active:$isActive, canceledContext:$canceledContext]"
-        )
-        coroutineScope.launch {
-            logException(exception)
-        }
-    }
+    private val repository = MovieListRepository(ApiFactory.get())
 
-    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
-    private val _movies = MutableLiveData<List<Movie>>()
-    val movies get(): LiveData<List<Movie>> = _movies
+    private val _genres = MutableLiveData<List<Genre>>()
+    val genres get(): LiveData<List<Genre>> = _genres
 
     init {
-        val moviesJob = coroutineScope.async(exceptionHandler) {
-            loadMovies(application.applicationContext)
-        }
-        coroutineScope.launch(exceptionHandler) {
-            _movies.postValue(moviesJob.await())
+        viewModelScope.launch {
+            val response = repository.getGenres()
+            _genres.postValue(response.genres)
         }
     }
 
-    private suspend fun logException(throwable: Throwable) = withContext(Dispatchers.IO) {
-        Log.e(FragmentMoviesList.TAG, "${throwable.printStackTrace()}")
-    }
+    fun movies(query: String) =
+        Pager(PagingConfig(20)) { MoviesPagingSource(ApiFactory.get(), query) }
+            .flow.cachedIn(viewModelScope)
 }

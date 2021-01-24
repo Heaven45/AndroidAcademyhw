@@ -7,17 +7,22 @@ import androidx.fragment.app.viewModels
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.androidacademyhw.FragmentClickListener
+import android.widget.AdapterView
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.
+import com.emikhalets.androidacademy.movies.MoviesViewModel
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
 import com.example.androidacademyhw.details.FragmentMoviesDetails
 import com.example.androidacademyhw.movies.MoviesAdapter.OnMovieClickListener
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class FragmentMoviesList : Fragment(), OnMovieClickListener {
 
-    private var fragmentMoviesClickListener: FragmentClickListener? = null
+    private var fragmentMoviesClickListener: FragmentMoviesClickListener? = null
 
     private var _binding: FragmentMoviesListBinding? = null
     private val binding get() = _binding!!
@@ -36,28 +41,31 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.movies.observe(viewLifecycleOwner, { movies -> moviesAdapter.submitList(movies) })
         initAdapter()
+
+        viewModel.genres.observe(viewLifecycleOwner, { genres ->
+            moviesAdapter.genres = genres
+
+            lifecycleScope.launch {
+                viewModel.movies("popular").collectLatest { data -> moviesAdapter.submitData(data) }
+            }
+        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        fragmentMoviesClickListener = null
         _binding = null
     }
 
     private fun initAdapter() {
         moviesAdapter = MoviesAdapter(this)
-        binding.listMovies.apply {
-            adapter = moviesAdapter
-        }
+        binding.listMovies.adapter = moviesAdapter
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is FragmentClickListener) {
-            fragmentMoviesClickListener = context
-        }
+        if (context is FragmentMoviesClickListener) fragmentMoviesClickListener = context
     }
 
     override fun onDetach() {
@@ -72,13 +80,11 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
             .commit()
     }
 
-    override fun onMovieClick(movie: Movie) {
-        navigateToDetails(movie)
+    override fun onMovieClick(movieId: Int) {
+        fragmentMoviesClickListener?.onMovieClicked(movieId)
     }
 
     companion object {
-        const val TAG = "Movies_List_Log"
-
         fun newInstance(): FragmentMoviesList {
             val args = Bundle()
             val fragment = FragmentMoviesList()
