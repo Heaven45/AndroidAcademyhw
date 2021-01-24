@@ -20,6 +20,7 @@ import com.example.androidacademyhw.data.loadActors
 import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 
 class FragmentMoviesDetails : Fragment() {
     private var fragmentClickListener: FragmentClickListener? = null
@@ -75,7 +76,7 @@ class FragmentMoviesDetails : Fragment() {
         binding.buttonBackImage.setOnClickListener { navigateBack() }
         binding.buttonBackText.setOnClickListener { navigateBack() }
 
-        coroutineScope.launch(Dispatchers.Main) {
+        coroutineScope.launch() {
             val actors = getActors(requireContext())
             initAdapter(actors)
         }
@@ -126,6 +127,11 @@ class FragmentMoviesDetails : Fragment() {
     override fun onDetach() {
         super.onDetach()
         fragmentClickListener = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
     }
 
     companion object {

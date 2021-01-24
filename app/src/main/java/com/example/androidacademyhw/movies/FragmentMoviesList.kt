@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import com.example.androidacademyhw.FragmentClickListener
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
-import com.example.androidacademyhw.data.Actor
-import com.example.androidacademyhw.data.Genre
 import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.loadMovies
 import com.example.androidacademyhw.databinding.FragmentMoviesListBinding
@@ -41,7 +39,7 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        coroutineScope.launch(Dispatchers.Main) {
+        coroutineScope.launch() {
             val movies = getMovies(requireContext())
             initAdapter(movies)
         }
@@ -50,6 +48,7 @@ class FragmentMoviesList : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        coroutineScope.cancel()
     }
 
     private fun initAdapter(movies: List<Movie>) {
@@ -77,7 +76,7 @@ class FragmentMoviesList : Fragment() {
         }
     }
 
-        override fun onAttach(context: Context) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is FragmentClickListener) {
             fragmentMoviesClickListener = context
