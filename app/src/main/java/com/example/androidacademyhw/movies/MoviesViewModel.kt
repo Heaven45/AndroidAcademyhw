@@ -28,13 +28,13 @@ class MoviesViewModel(application: Application) : AndroidViewModel(application) 
     val movies get(): LiveData<List<Movie>> = _movies
 
     init {
-        val moviesJob = coroutineScope.async(exceptionHandler) {
-            loadMovies(application.applicationContext)
-        }
         coroutineScope.launch(exceptionHandler) {
-            _movies.postValue(moviesJob.await())
+            val movies = loadMovies(application.applicationContext)
+            _movies.postValue(movies)
         }
     }
+
+    fun cancelCoroutines() = coroutineScope.cancel()
 
     private suspend fun logException(throwable: Throwable) = withContext(Dispatchers.IO) {
         Log.e(FragmentMoviesList.TAG, "${throwable.printStackTrace()}")

@@ -53,13 +53,6 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is FragmentClickListener) {
-            fragmentMoviesClickListener = context
-        }
-    }
-
     override fun onDetach() {
         super.onDetach()
         fragmentMoviesClickListener = null
@@ -71,6 +64,11 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
             .addToBackStack(Tags.BACK_STACK_TAG)
             .commit()
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        moviesAdapter = null
+//    }
 
     override fun onMovieClick(movie: Movie) {
         navigateToDetails(movie)

@@ -64,7 +64,6 @@ class FragmentMoviesDetails : Fragment() {
 
     private fun updateUI(movie: Movie) {
         with(binding) {
-
             Glide.with(root.context)
                 .load(movie.poster)
                 .placeholder(R.drawable.ic_launcher_foreground)
@@ -100,13 +99,6 @@ class FragmentMoviesDetails : Fragment() {
     suspend fun getActors(context: Context): List<Actor> {
         return withContext(Dispatchers.IO) {
             loadActors(context)
-        }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is FragmentClickListener) {
-            fragmentClickListener = context
         }
     }
 
