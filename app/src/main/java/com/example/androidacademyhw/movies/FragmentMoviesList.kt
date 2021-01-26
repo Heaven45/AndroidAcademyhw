@@ -65,10 +65,10 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
             .commit()
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        moviesAdapter = null
-//    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.listMovies.adapter = null
+    }
 
     override fun onMovieClick(movie: Movie) {
         navigateToDetails(movie)
