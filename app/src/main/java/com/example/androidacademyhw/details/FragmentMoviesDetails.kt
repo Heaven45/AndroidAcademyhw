@@ -6,22 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide
-import com.example.androidacademyhw.FragmentClickListener
+import coil.load
 import com.example.androidacademyhw.R
-import com.example.androidacademyhw.Tags
+import com.example.androidacademyhw.buildImageUrl
 import com.example.androidacademyhw.data.Actor
-import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.loadActors
+import com.example.androidacademyhw.data.models.Credits
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
 import kotlinx.coroutines.*
 import java.io.Serializable
 
 class FragmentMoviesDetails : Fragment() {
-    private var fragmentClickListener: FragmentClickListener? = null
+    private var fragmentClickListener: FragmentDetailsClickListener? = null
 
     private var _binding: FragmentMoviesDetailsBinding? = null
     private val binding get() = _binding!!
@@ -34,17 +31,7 @@ class FragmentMoviesDetails : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_movies_details, container, false)
-
-        view?.findViewById<ImageView>(R.id.button_back_image)?.setOnClickListener {
-            fragmentClickListener?.onBackFragmentClicked()
-        }
-
-        view?.findViewById<TextView>(R.id.button_back_text)?.setOnClickListener {
-            fragmentClickListener?.onBackFragmentClicked()
-        }
-
+    ): View {
         _binding = FragmentMoviesDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,40 +41,43 @@ class FragmentMoviesDetails : Fragment() {
 
         initAdapter()
 
-        val movie = arguments?.getSerializable(Tags.KEY_MOVIE) as Movie
-        updateUI(movie)
+        arguments?.let {
+            val id = it.getInt(KEY_MOVIE_ID)
+            viewModel.getMovie(id)
+            viewModel.getCast(id)
+        }
 
-        binding.buttonBackImage.setOnClickListener { navigateBack() }
-        binding.buttonBackText.setOnClickListener { navigateBack() }
+        viewModel.movie.observe(viewLifecycleOwner, { movie -> updateUI(movie) })
+        viewModel.cast.observe(viewLifecycleOwner, { credits -> updateCastUi(credits) })
+
+        binding.buttonBackImage.setOnClickListener { fragmentClickListener?.onDetailsBackClicked() }
+        binding.buttonBackText.setOnClickListener { fragmentClickListener?.onDetailsBackClicked() }
     }
 
     private fun navigateBack() {
         requireActivity().supportFragmentManager.popBackStack()
     }
 
-    private fun updateUI(movie: Movie) {
+    private fun updateCastUi(credits: Credits) {
+        if (credits.cast.isNotEmpty()) actorsAdapter.submitList(credits.cast)
+    }
+
+    private fun updateUI(movie: com.example.androidacademyhw.data.models.Movie) {
         with(binding) {
-
-            Glide.with(root.context)
-                .load(movie.poster)
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .error(R.drawable.ic_unlike)
-                .into(movieLogoImage)
-
-            age.text = getString(
-                com.example.androidacademyhw.R.string.details_item_text_pg,
-                movie.minimumAge
-            )
+            movie.backdrop_path?.let { image ->
+                image.load(buildImageUrl(image)) { crossfade(500) }
+            }
+            val releases = movie.release_dates.results
+            age.text =
+                releases.find { it.iso_3166_1 == "RU" }?.release_dates?.get(0)?.certification
+                    ?: releases.find { it.iso_3166_1 == "US" }?.release_dates?.get(0)?.certification
             movieNameText.text = movie.title
-            genre.text = movie.genres.map { it.name }.joinToString()
-            ratingbar.rating = movie.ratings.toFloat()
-            reviewAmount.text = getString(
-                com.example.androidacademyhw.R.string.details_text_reviews,
-                movie.numberOfRatings
+            layoutTagsRating.textTagline.text = viewModel.formatGenres(movie.genres)
+            layoutTagsRating.ratingBar.rating = movie.vote_average.toFloat() / 2
+            layoutTagsRating.textReviews.text = getString(
+                R.string.details_text_reviews, movie.vote_count
             )
-            movieDescription.text = movie.overview
-
-            if (movie.actors.isNotEmpty()) actorsAdapter.submitList(movie.actors)
+            textStory.text = movie.overview
         }
     }
 
@@ -108,7 +98,7 @@ class FragmentMoviesDetails : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is FragmentClickListener) {
+        if (context is FragmentDetailsClickListener) {
             fragmentClickListener = context
         }
     }
@@ -124,10 +114,13 @@ class FragmentMoviesDetails : Fragment() {
     }
 
     companion object {
-        fun newInstance(movie: Movie): FragmentMoviesDetails {
+
+        const val KEY_MOVIE_ID = "args_movie_id"
+
+        fun newInstance(movieId: Int): FragmentMoviesDetails {
             val fragment = FragmentMoviesDetails()
             val args = Bundle()
-            args.putSerializable(Tags.KEY_MOVIE, movie as Serializable)
+            args.putSerializable(KEY_MOVIE_ID, movieId)
             fragment.arguments = args
             return fragment
         }

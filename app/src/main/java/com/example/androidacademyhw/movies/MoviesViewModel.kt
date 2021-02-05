@@ -1,4 +1,4 @@
-package com.emikhalets.androidacademy.movies
+package com.example.androidacademyhw.movies
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

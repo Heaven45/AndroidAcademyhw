@@ -11,7 +11,6 @@ import com.example.androidacademyhw.data.Movie
 import com.example.androidacademyhw.data.api.ApiFactory
 import com.example.androidacademyhw.data.models.Genre
 import com.example.androidacademyhw.data.models.MovieResult
-import com.example.androidacademyhw.databinding.ItemMovieBinding
 import com.example.androidacademyhw.databinding.MovieBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

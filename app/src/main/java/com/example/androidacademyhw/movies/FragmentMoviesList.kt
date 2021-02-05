@@ -7,10 +7,7 @@ import androidx.fragment.app.viewModels
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.
-import com.emikhalets.androidacademy.movies.MoviesViewModel
 import com.example.androidacademyhw.R
 import com.example.androidacademyhw.Tags
 import com.example.androidacademyhw.data.Movie
@@ -19,6 +16,13 @@ import com.example.androidacademyhw.details.FragmentMoviesDetails
 import com.example.androidacademyhw.movies.MoviesAdapter.OnMovieClickListener
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 
 class FragmentMoviesList : Fragment(), OnMovieClickListener {
 
@@ -42,12 +46,24 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
+        initSpinner()
 
         viewModel.genres.observe(viewLifecycleOwner, { genres ->
             moviesAdapter.genres = genres
 
             lifecycleScope.launch {
                 viewModel.movies("popular").collectLatest { data -> moviesAdapter.submitData(data) }
+            }
+
+            binding.spinner.onItemSelectedListener = object : CustomItemSelectedListener() {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    when (position) {
+                        0 -> setListType("popular")
+                        1 -> setListType("upcoming")
+                        2 -> setListType("top")
+                        3 -> setListType("now")
+                    }
+                }
             }
         })
     }
@@ -61,6 +77,23 @@ class FragmentMoviesList : Fragment(), OnMovieClickListener {
     private fun initAdapter() {
         moviesAdapter = MoviesAdapter(this)
         binding.listMovies.adapter = moviesAdapter
+    }
+
+    private fun initSpinner() {
+        val spinnerAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.listTypes,
+            R.layout.item_spinner
+        )
+        spinnerAdapter.setDropDownViewResource(R.layout.item_spinner)
+        binding.spinner.adapter = spinnerAdapter
+    }
+
+    private fun setListType(type: String) {
+        lifecycleScope.launch {
+            binding.listMovies.scrollToPosition(0)
+            viewModel.movies(type).collectLatest { data -> moviesAdapter.submitData(data) }
+        }
     }
 
     override fun onAttach(context: Context) {
