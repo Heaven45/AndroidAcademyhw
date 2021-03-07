@@ -2,10 +2,10 @@ package com.example.androidacademyhw.details
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
 import com.example.androidacademyhw.R
@@ -13,9 +13,9 @@ import com.example.androidacademyhw.buildImageUrl
 import com.example.androidacademyhw.data.Actor
 import com.example.androidacademyhw.data.loadActors
 import com.example.androidacademyhw.data.models.Credits
+import com.example.androidacademyhw.data.models.Movie
 import com.example.androidacademyhw.databinding.FragmentMoviesDetailsBinding
 import kotlinx.coroutines.*
-import java.io.Serializable
 
 class FragmentMoviesDetails : Fragment() {
     private var fragmentClickListener: FragmentDetailsClickListener? = null
@@ -62,10 +62,10 @@ class FragmentMoviesDetails : Fragment() {
         if (credits.cast.isNotEmpty()) actorsAdapter.submitList(credits.cast)
     }
 
-    private fun updateUI(movie: com.example.androidacademyhw.data.models.Movie) {
+    private fun updateUI(movie: Movie) {
         with(binding) {
             movie.backdrop_path?.let { image ->
-                image.load(buildImageUrl(image)) { crossfade(500) }
+                movieLogoImage.load(buildImageUrl(image)) { crossfade(500) }
             }
             val releases = movie.release_dates.results
             age.text =
@@ -77,7 +77,7 @@ class FragmentMoviesDetails : Fragment() {
             layoutTagsRating.textReviews.text = getString(
                 R.string.details_text_reviews, movie.vote_count
             )
-            textStory.text = movie.overview
+            Storyline.text = movie.overview
         }
     }
 

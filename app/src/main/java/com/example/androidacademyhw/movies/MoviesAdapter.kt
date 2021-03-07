@@ -2,6 +2,7 @@ package com.example.androidacademyhw.movies
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -18,7 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MoviesAdapter(private val clickListener: OnMovieClickListener)
-    : ListAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
+    : PagingDataAdapter<Movie, MoviesAdapter.ViewHolder>(MovieDiffCallback()) {
 
     private val mainCoroutineContext = CoroutineScope(Dispatchers.Main)
     private val coroutineContext = CoroutineScope(Dispatchers.IO)
@@ -33,7 +34,7 @@ class MoviesAdapter(private val clickListener: OnMovieClickListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, clickListener) }
+        getItem(position)?.let { holder.bind(MovieResult, clickListener) }
     }
 
     inner class ViewHolder(private val binding: MovieBinding) :
